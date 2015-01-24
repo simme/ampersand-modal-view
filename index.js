@@ -32,24 +32,29 @@ module.exports = AmpView.extend({
   // Customization options.
   props: {
     title: 'string',
-  //  description: 'string',
-  //  close: ['string', false, 'Close'],
-  //  contentView: 'view'
+    description: 'string',
+    closeText: ['string', false, 'Close'],
+    contentView: 'view'
   },
 
   // Bind our properties to the element.
-  //bindings: {
-  //  'this.title': '[data-hook="title"]',
-  //  description: '[data-hook="description"]',
-  //  close: '[data-hook="close-text"]',
-  //  contentView: {
-  //    type: function (el, val, previousVal) {
-  //      if (previousVal) { previousVal.remove(); }
-  //      this.registerSubview(val);
-  //    },
-  //    hook: 'content',
-  //  },
-  //},
+  bindings: {
+    title: '[data-hook="title"]',
+    description: '[data-hook="description"]',
+    closeText: '[data-hook="close-text"]',
+    contentView: {
+      type: function (el, val, previousVal) {
+        if (previousVal) { previousVal.remove(); }
+        this.registerSubview(val);
+        var content = this.queryByHook('content');
+        if (!val.el) {
+          val.render();
+        }
+        content.appendChild(val.el);
+      },
+      hook: 'content',
+    },
+  },
 
   // Declare `view` a custom data type.
   dataTypes: {
