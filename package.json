@@ -1,0 +1,19 @@
+{
+  "name": "ampersand-modal-view",
+  "version": "1.0.0",
+  "description": "Modal view for Ampersand.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "ampersand",
+    "modal",
+    "view"
+  ],
+  "author": "Simon Ljungberg <hi@iamsim.me> (http://iamsim.me/)",
+  "license": "MIT",
+  "dependencies": {
+    "ampersand-view": "^7.2.0"
+  }
+}
