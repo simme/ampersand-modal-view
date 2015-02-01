@@ -15,7 +15,7 @@
 var AmpView = require('ampersand-view');
 
 var view = [
-  '<div role="dialog" aria-hidden="true" aria-describedby="amp-modal-descr" data-hook="overlay">',
+  '<div role="dialog" aria-hidden="true" aria-describedby="amp-modal-descr" data-hook="overlay" class="modal-overlay">',
     '<div class="modal-body" tabindex="0" role="document">',
       '<button class="close" data-hook="close">',
         '<span aria-hidden="true">&times;</span>',
@@ -106,6 +106,11 @@ module.exports = AmpView.extend({
     'keydown': 'escape',
   },
 
+  initialize: function () {
+    // Need to listen to entire doc, not just in modal.
+    document.addEventListener('keydown', this.escape.bind(this));
+  },
+
   //
   // ## Open
   //
@@ -151,7 +156,6 @@ module.exports = AmpView.extend({
     // Append ourselves to container
     if (!this.rendered) {
       this.render();
-      console.log(this.el);
     }
     this.el.style.display = 'none';
     container.appendChild(this.el);
@@ -177,6 +181,19 @@ module.exports = AmpView.extend({
     var container = this.el.parentNode;
     // We can't close if we're not appended to a parent.
     if (!container) { return false; }
+
+    // Don't close on clicks inside the modal.
+    if (event) {
+      var target = event.target;
+      var closeBtn = this.queryByHook('close');
+      var closeBtnClicked = closeBtn === target || closeBtn.contains(target);
+      var overlay = this.queryByHook('overlay');
+      var overlayClicked = target === overlay;
+      var shouldClose = (closeBtnClicked || overlayClicked);
+      if (!shouldClose) {
+        return false;
+      }
+    }
 
     // Restore aria-hidden on previously hidden elements
     this.hiddenElements.forEach(function (node) {
