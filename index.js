@@ -100,8 +100,8 @@ module.exports = AmpView.extend({
 
   // Hook up DOM events
   events: {
-    'click [data-hook="overlay"]': 'close',
-    'click [data-hook="close"]': 'close',
+    'click [data-hook="overlay"]': 'cancel',
+    'click [data-hook="close"]': 'cancel',
     'focus': 'trapFocus',
     'keydown': 'escape',
   },
@@ -182,6 +182,21 @@ module.exports = AmpView.extend({
     // We can't close if we're not appended to a parent.
     if (!container) { return false; }
 
+    this.restore();
+    this.trigger('close');
+    this.remove();
+  },
+
+  //
+  // ## Cancel
+  //
+  // Dismisses the modal just like `close()` but signifies a canceled action.
+  //
+  cancel: function cancelModal(event) {
+    var container = this.el.parentNode;
+    // We can't close if we're not appended to a parent.
+    if (!container) { return false; }
+
     // Don't close on clicks inside the modal.
     if (event) {
       var target = event.target;
@@ -195,6 +210,18 @@ module.exports = AmpView.extend({
       }
     }
 
+    this.restore();
+    this.trigger('cancel');
+    this.remove();
+  },
+
+  //
+  // ## Restore
+  //
+  // Restore document state when closing modal.
+  //
+  restore: function restoreState() {
+    var container = this.el.parentNode;
     // Restore aria-hidden on previously hidden elements
     this.hiddenElements.forEach(function (node) {
       node.removeAttribute('aria-hidden');
@@ -204,8 +231,6 @@ module.exports = AmpView.extend({
     // Restore container
     container.style.overflow = this.containerOverflow;
     container.style.height = this.containerHeight;
-
-    this.remove();
 
     // Restore focus
     if (this.lastFocus) {
@@ -222,7 +247,7 @@ module.exports = AmpView.extend({
   escape: function escape(event) {
     if (event.keyCode === 27) {
       event.preventDefault();
-      this.close();
+      this.cancel();
     }
   },
 
